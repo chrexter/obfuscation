@@ -46,6 +46,7 @@ jobs:
 
       # !!!
       # Build and Sign your application here
+      # !!
 
       # Important! Cleanup: remove the certificate and provisioning profile from the runner!
       - name: Clean up keychain and provisioning profile
