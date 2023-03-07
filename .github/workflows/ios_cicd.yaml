@@ -54,6 +54,7 @@ jobs:
           flutter-version: "3.x"
           channel: stable
       - run: flutter pub get
+      - run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
 
 #  build_ios:
 #    name: Build Apple IPA
