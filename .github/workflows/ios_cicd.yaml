@@ -5,7 +5,8 @@ on:
       - main
 
 jobs:
-  build:
+  certificate_and_provisioning:
+    name: Apple certificate and provisioning
     runs-on: macos-latest
     steps:
       # Checks-out our repository under $GITHUB_WORKSPACE, so our job can access it
@@ -42,17 +43,24 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-      # Install flutter
-      - name: Flutter get
-        uses: subosito/flutter-action@v1
+  build_ios:
+    name: Build Apple IPA
+    needs: [ certificate_and_provisioning ]
+    steps:
+      - uses: actions/checkout@v3
         with:
-          flutter-version: '2.10.1'
+          fetch-depth: 0
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.x"
+          channel: stable
+          cache: true
 
-      # Install your project's dependencies
-      - run: flutter pub get
+      - name: Install your project's dependencies
+        run: flutter pub get
 
       # Build and sign the ipa using a single flutter command
-      - name: Building IPA
+      - name: Build and sign the ipa
         run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
 
       # Collect the file and upload as artifact
@@ -63,9 +71,16 @@ jobs:
           # Path to the release files
           path: build/ios/ipa/*.ipa
 
-      # Important! Cleanup: remove the certificate and provisioning profile from the runner!
-      - name: Clean up keychain and provisioning profile
-        if: ${{ always() }}
-        run: |
-          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
-          rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
+    clean_up:
+      name: Clean up keychain and provisioning profile
+      needs: [ build_ios ]
+      steps:
+        - uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
+
+        # Important! Cleanup: remove the certificate and provisioning profile from the runner!
+        - if: ${{ always() }}
+        - run: |
+            security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+            rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
