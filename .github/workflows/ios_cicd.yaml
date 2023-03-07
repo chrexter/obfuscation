@@ -43,42 +43,44 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-#  build_ios:
-#    name: Build Apple IPA
-#    needs: [ certificate_and_provisioning ]
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          fetch-depth: 0
-#      - uses: subosito/flutter-action@v2
-#        with:
-#          flutter-version: "3.x"
-#          channel: stable
-#          cache: true
-#
-#      # Install your project's dependencies
-#      - run: flutter pub get
-#      # Build and sign the ipa using a single flutter command
-#      - run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
-#
-#      # Collect the file and upload as artifact
-#      - name: collect ipa artifacts
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: release-ipa
-#          # Path to the release files
-#          path: build/ios/ipa/*.ipa
-#
-#  clean_up:
-#    name: Clean up keychain and provisioning profile
-#    needs: [ build_ios ]
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          fetch-depth: 0
-#
-#      # Important! Cleanup: remove the certificate and provisioning profile from the runner!
-#      - if: ${{ always() }}
-#      - run: |
-#          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
-#          rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
+  build_ios:
+    name: Build Apple IPA
+    runs-on: macos-latest
+    needs: [ certificate_and_provisioning ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.x"
+          channel: stable
+          cache: true
+
+      # Install your project's dependencies
+      - run: flutter pub get
+      # Build and sign the ipa using a single flutter command
+      - run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
+
+      # Collect the file and upload as artifact
+      - name: collect ipa artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: release-ipa
+          # Path to the release files
+          path: build/ios/ipa/*.ipa
+
+  clean_up:
+    name: Clean up keychain and provisioning profile
+    runs-on: macos-latest
+    needs: [ build_ios ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # Important! Cleanup: remove the certificate and provisioning profile from the runner!
+      - if: ${{ always() }}
+      - run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+          rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
