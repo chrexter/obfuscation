@@ -49,6 +49,6 @@ jobs:
         run: flutter build ios --release --no-codesign
       - name: Build resolve Swift dependencies
         run: xcodebuild -resolvePackageDependencies -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release
-#      - name: Build xArchive
-#        run: |
-#          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=YOUR_TEAM_ID -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath build-output/app.xcarchive PROVISIONING_PROFILE=YOUR_UUID clean archive CODE_SIGN_IDENTITY="Apple Distribution: Damien Aicheh"
+      - name: Build xArchive
+        run: |
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=3M3KN5WVH6 -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath /Users/runner/work/obfuscation/obfuscation/build/ios/archive/Runner.xcarchive PROVISIONING_PROFILE=35dc9902-3d64-4e09-a3e4-046fc806e53b clean archive CODE_SIGN_IDENTITY="Apple Development: Ayodeji Olaoluwayinka Olabisi (67Y2G5DJ83)"
