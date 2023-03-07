@@ -43,18 +43,25 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-  build_ios:
-    name: Build Apple IPA
-    runs-on: macos-latest
-    needs: [ certificate_and_provisioning ]
-    steps:
-      - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.x"
           channel: stable
       - run: flutter pub get
       - run: flutter build ipa --release
+
+#  build_ios:
+#    name: Build Apple IPA
+#    runs-on: macos-latest
+#    needs: [ certificate_and_provisioning ]
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: subosito/flutter-action@v2
+#        with:
+#          flutter-version: "3.x"
+#          channel: stable
+#      - run: flutter pub get
+#      - run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
 
 #  build_ios:
 #    name: Build Apple IPA
