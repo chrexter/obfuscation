@@ -46,6 +46,9 @@ jobs:
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
       - name: Restore packages
+          run: flutter clean
+
+      - name: Restore packages
         run: flutter pub get
 
       - name: Build IPA file
