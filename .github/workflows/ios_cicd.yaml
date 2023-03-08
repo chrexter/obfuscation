@@ -50,24 +50,24 @@ jobs:
         run: flutter pub get
 
       - name: Build Flutter
-        run: flutter build ios --release --no-codesign
+        run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
 
-      - name: Build resolve Swift dependencies
-        run: xcodebuild -resolvePackageDependencies -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release
-
-      - name: Build xArchive
-        run: |
-          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=3M3KN5WVH6 -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath ${{ env.ARCHIVE_BUILD_PATH }} PROVISIONING_PROFILE=35dc9902-3d64-4e09-a3e4-046fc806e53b clean archive CODE_SIGN_IDENTITY="Apple Development: Ayodeji Olaoluwayinka Olabisi"
-
-      - name: Export ipa
-        run: | 
-          xcodebuild -exportArchive -archivePath ${{ env.ARCHIVE_BUILD_PATH }} -exportPath ${{ env.IOS_BUILD_PATH }} -exportOptionsPlist ios/Runner/ExportOptions.plist
+      #      - name: Build resolve Swift dependencies
+#        run: xcodebuild -resolvePackageDependencies -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release
+#
+#      - name: Build xArchive
+#        run: |
+#          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=3M3KN5WVH6 -sdk 'iphoneos' -destination 'generic/platform=iOS' SKIP_INSTALL=NO -archivePath ${{ env.ARCHIVE_BUILD_PATH }} PROVISIONING_PROFILE=a8b74adf-56b5-4f9f-801f-d1198db1636f clean archive CODE_SIGN_IDENTITY="Apple Distribution: Ayodeji Olaoluwayinka Olabisi (3M3KN5WVH6)"
+#
+#      - name: Export ipa
+#        run: |
+#          xcodebuild -exportArchive -archivePath ${{ env.ARCHIVE_BUILD_PATH }} -exportPath ${{ env.IOS_BUILD_PATH }} -exportOptionsPlist ios/Runner/ExportOptions.plist
 
       - name: Publish iOS Artefacts
         uses: actions/upload-artifact@v2
         with:
           name: release-ios
-          path: ${{ env.IOS_BUILD_PATH }}
+          path: ${{ env.IOS_BUILD_PATH }}/ipa/*.ipa
 
       # Important! Cleanup: remove the certificate and provisioning profile from the runner!
       - name: Clean up keychain and provisioning profile
