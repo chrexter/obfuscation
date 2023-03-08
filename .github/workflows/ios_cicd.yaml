@@ -11,9 +11,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install and set Flutter version
-          uses: subosito/flutter-action@v2
-          with:
-            flutter-version: '3.x'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
       - name: Install the Apple certificate and provisioning profile
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
