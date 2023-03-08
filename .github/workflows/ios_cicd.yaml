@@ -7,9 +7,6 @@ jobs:
   certificate_and_provisioning:
     name: Apple certificate and provisioning
     runs-on: macos-latest
-    env:
-      ARCHIVE_BUILD_PATH: /Users/runner/work/obfuscation/obfuscation/build/archive/Runner.xcarchive
-      IOS_BUILD_PATH: /Users/runner/work/obfuscation/obfuscation/build/ios
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -49,25 +46,14 @@ jobs:
       - name: Restore packages
         run: flutter pub get
 
-      - name: Build Flutter
-        run: flutter build ios --release --no-codesign
+      - name: Build IPA file
+        run: flutter build ipa --release
 
-      - name: Build resolve Swift dependencies
-        run: xcodebuild -resolvePackageDependencies -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release
-
-      - name: Build xArchive
-        run: |
-          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=3M3KN5WVH6 -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath ${{ env.ARCHIVE_BUILD_PATH }} PROVISIONING_PROFILE=35dc9902-3d64-4e09-a3e4-046fc806e53b clean archive CODE_SIGN_IDENTITY="Apple Development: Ayodeji Olaoluwayinka Olabisi"
-
-      - name: Export ipa
-        run: | 
-          xcodebuild -exportArchive -archivePath ${{ env.ARCHIVE_BUILD_PATH }} -exportPath ${{ env.IOS_BUILD_PATH }} -exportOptionsPlist ios/Runner/ExportOptions.plist
-
-      - name: Publish iOS Artefacts
+      - name: Publish IPA Artefacts
         uses: actions/upload-artifact@v2
         with:
-          name: release-ios
-          path: ${{ env.IOS_BUILD_PATH }}
+          name: release-ipa
+          path: build/ios/ipa/*.ipa
 
       # Important! Cleanup: remove the certificate and provisioning profile from the runner
       - name: Clean up keychain and provisioning profile
