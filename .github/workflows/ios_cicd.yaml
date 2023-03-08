@@ -21,9 +21,7 @@ jobs:
   certificate_provisioning_and_build:
     name: Apple certificate, profile provisioning, and build processes
     runs-on: macos-latest
-    env:
-      ARCHIVE_BUILD_PATH: /Users/runner/work/obfuscation/obfuscation/build/archive/Runner.xcarchive
-      IOS_BUILD_PATH: /Users/runner/work/obfuscation/obfuscation/build/ios
+    needs: [ test_and_analyze ]
     steps:
       - uses: actions/checkout@v3
       - name: Install and set Flutter version
