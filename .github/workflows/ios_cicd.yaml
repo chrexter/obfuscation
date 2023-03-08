@@ -52,3 +52,10 @@ jobs:
       - name: Build xArchive
         run: |
           xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=3M3KN5WVH6 -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath /Users/runner/work/obfuscation/obfuscation/build/ios/archive/Runner.xcarchive PROVISIONING_PROFILE=35dc9902-3d64-4e09-a3e4-046fc806e53b clean archive CODE_SIGN_IDENTITY="Apple Development: Ayodeji Olaoluwayinka Olabisi"
+
+      # Important! Cleanup: remove the certificate and provisioning profile from the runner!
+      - name: Clean up keychain and provisioning profile
+        if: ${{ always() }}
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+          rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
