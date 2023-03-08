@@ -7,6 +7,8 @@ jobs:
   certificate_and_provisioning:
     name: Apple certificate and provisioning
     runs-on: macos-latest
+    env:
+      IOS_BUILD_PATH: /Users/runner/work/obfuscation/obfuscation/build/ios
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -53,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: release-ipa
-          path: build/ios/ipa/*.ipa
+          path: ${{ env.IOS_BUILD_PATH/ipa/*.ipa }}
 
       # Important! Cleanup: remove the certificate and provisioning profile from the runner
       - name: Clean up keychain and provisioning profile
