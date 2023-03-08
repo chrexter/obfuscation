@@ -69,7 +69,7 @@ jobs:
           name: release-ios
           path: ${{ env.IOS_BUILD_PATH }}
 
-      # Important! Cleanup: remove the certificate and provisioning profile from the runner
+      # Important! Cleanup: remove the certificate and provisioning profile from the runner!
       - name: Clean up keychain and provisioning profile
         if: ${{ always() }}
         run: |
