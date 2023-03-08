@@ -50,18 +50,18 @@ jobs:
         run: flutter pub get
 
       - name: Build Flutter
-        run: flutter build ipa
+        run: flutter build ios --release --no-codesign
 
-#      - name: Build resolve Swift dependencies
-#        run: xcodebuild -resolvePackageDependencies -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release
-#
-#      - name: Build xArchive
-#        run: |
-#          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=3M3KN5WVH6 -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath ${{ env.ARCHIVE_BUILD_PATH }} PROVISIONING_PROFILE=35dc9902-3d64-4e09-a3e4-046fc806e53b clean archive CODE_SIGN_IDENTITY="Apple Development: Ayodeji Olaoluwayinka Olabisi"
-#
-#      - name: Export ipa
-#        run: |
-#          xcodebuild -exportArchive -archivePath ${{ env.ARCHIVE_BUILD_PATH }} -exportPath ${{ env.IOS_BUILD_PATH }} -exportOptionsPlist ios/ExportOptions.plist
+      - name: Build resolve Swift dependencies
+        run: xcodebuild -resolvePackageDependencies -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release
+
+      - name: Build xArchive
+        run: |
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=3M3KN5WVH6 -sdk 'iphoneos' -destination 'generic/platform=iOS' -archivePath ${{ env.ARCHIVE_BUILD_PATH }} PROVISIONING_PROFILE=35dc9902-3d64-4e09-a3e4-046fc806e53b clean archive CODE_SIGN_IDENTITY="Apple Development: Ayodeji Olaoluwayinka Olabisi"
+
+      - name: Export ipa
+        run: | 
+          xcodebuild -exportArchive -archivePath ${{ env.ARCHIVE_BUILD_PATH }} -exportPath ${{ env.IOS_BUILD_PATH }} -exportOptionsPlist ios/Runner/ExportOptions.plist
 
       - name: Publish iOS Artefacts
         uses: actions/upload-artifact@v2
