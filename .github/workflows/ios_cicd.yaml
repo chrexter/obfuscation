@@ -8,6 +8,7 @@ jobs:
     name: Apple certificate and provisioning
     runs-on: macos-latest
     env:
+      ARCHIVE_BUILD_PATH: /Users/runner/work/obfuscation/obfuscation/build/archive/Runner.xcarchive
       IOS_BUILD_PATH: /Users/runner/work/obfuscation/obfuscation/build/ios
     steps:
       - name: Checkout repository
@@ -50,12 +51,6 @@ jobs:
 
       - name: Build IPA file
         run: flutter build ipa --release
-
-      - name: Publish IPA Artefacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: release-ipa
-          path: ${{ env.IOS_BUILD_PATH }}/ipa/*.ipa
 
       # Important! Cleanup: remove the certificate and provisioning profile from the runner
       - name: Clean up keychain and provisioning profile
