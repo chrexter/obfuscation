@@ -4,6 +4,20 @@ on:
     branches:
       - main
 jobs:
+  test_and_analyze:
+    name: Run flutter test and analyzer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.x"
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
   certificate_provisioning_and_build:
     name: Apple certificate, profile provisioning, and build processes
     runs-on: macos-latest
