@@ -67,7 +67,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: release-ios
-          path: ${{ env.IOS_BUILD_PATH }}
+          path: ${{ env.IOS_BUILD_PATH }}/ipa/*.ipa
 
       # Important! Cleanup: remove the certificate and provisioning profile from the runner!
       - name: Clean up keychain and provisioning profile
