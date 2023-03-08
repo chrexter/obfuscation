@@ -61,7 +61,7 @@ jobs:
 
       - name: Export ipa
         run: | 
-          xcodebuild -exportArchive -archivePath ${{ env.ARCHIVE_BUILD_PATH }} -exportPath ${{ env.IOS_BUILD_PATH }} -exportOptionsPlist ios/Runner/ExportOptions.plist
+          xcodebuild -exportArchive -archivePath ${{ env.ARCHIVE_BUILD_PATH }} -exportPath ${{ env.IOS_BUILD_PATH }} 
 
       - name: Publish iOS Artefacts
         uses: actions/upload-artifact@v2
