@@ -4,15 +4,14 @@ on:
     branches:
       - main
 jobs:
-  certificate_and_provisioning:
-    name: Apple certificate and provisioning
+  certificate_provisioning_and_build:
+    name: Apple certificate, profile provisioning, and build processes
     runs-on: macos-latest
     env:
       ARCHIVE_BUILD_PATH: /Users/runner/work/obfuscation/obfuscation/build/archive/Runner.xcarchive
       IOS_BUILD_PATH: /Users/runner/work/obfuscation/obfuscation/build/ios
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       - name: Install and set Flutter version
         uses: subosito/flutter-action@v2
         with:
@@ -46,28 +45,17 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-      - name: Restore packages
+      - name: Get flutter dependencies
         run: flutter pub get
 
-      - name: Build Flutter
+      - name: Build IPA
         run: flutter build ipa --release --export-options-plist=ios/Runner/ExportOptions.plist
 
-      #      - name: Build resolve Swift dependencies
-#        run: xcodebuild -resolvePackageDependencies -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release
-#
-#      - name: Build xArchive
-#        run: |
-#          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release DEVELOPMENT_TEAM=3M3KN5WVH6 -sdk 'iphoneos' -destination 'generic/platform=iOS' SKIP_INSTALL=NO -archivePath ${{ env.ARCHIVE_BUILD_PATH }} PROVISIONING_PROFILE=a8b74adf-56b5-4f9f-801f-d1198db1636f clean archive CODE_SIGN_IDENTITY="Apple Distribution: Ayodeji Olaoluwayinka Olabisi (3M3KN5WVH6)"
-#
-#      - name: Export ipa
-#        run: |
-#          xcodebuild -exportArchive -archivePath ${{ env.ARCHIVE_BUILD_PATH }} -exportPath ${{ env.IOS_BUILD_PATH }} -exportOptionsPlist ios/Runner/ExportOptions.plist
-
-      - name: Publish iOS Artefacts
+      - name: Publish IPA Artefacts
         uses: actions/upload-artifact@v2
         with:
-          name: release-ios
-          path: ${{ env.IOS_BUILD_PATH }}/ipa/*.ipa
+          name: release-ipa
+          path: build/ios/ipa/*.ipa
 
       # Important! Cleanup: remove the certificate and provisioning profile from the runner!
       - name: Clean up keychain and provisioning profile
@@ -75,3 +63,14 @@ jobs:
         run: |
           security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
           rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
+
+  distribution:
+    name: IPA distribution to Firebase
+    needs: [ certificate_provisioning_and_build ]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get release-ipa from artifacts
+          uses: actions/download-artifact@v2
+          with:
+            name: release-ipa
